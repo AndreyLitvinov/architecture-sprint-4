@@ -1,0 +1,14 @@
+@startuml
+
+actor       Оператор    as operator
+control     "MES API"   as mes
+database    Redis       as cache
+
+operator -> mes : Запрашивает список заказов
+mes -> cache : Запрашивает список заказов
+cache -> mes : Список заказов
+mes -> operator : Список заказов
+
+mes --> cache : Фоновое обновление заказа
+
+@enduml
