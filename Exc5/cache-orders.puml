@@ -3,12 +3,20 @@
 actor       Оператор    as operator
 control     "MES API"   as mes
 database    Redis       as cache
+database    "MES DB"    as mesdb
+queue       RabbitMQ    as queuermq
 
 operator -> mes : Запрашивает список заказов
 mes -> cache : Запрашивает список заказов
 cache -> mes : Список заказов
-mes -> operator : Список заказов
 
-mes --> cache : Фоновое обновление заказа
+operator [#DarkRed]-> mes: Изменяет статус заказа
+mes [#DarkRed]-> cache : Обновляются данные в кеше
+cache [#DarkRed]-> mesdb : Данные сохраняются в БД
+
+queuermq [#DarkViolet]-> mes : События из очереди
+mes [#DarkViolet]-> cache : Обновления кеша на основе событий из очереди
+cache [#DarkViolet]-> mesdb : Данные сохраняются в БД
+
 
 @enduml
